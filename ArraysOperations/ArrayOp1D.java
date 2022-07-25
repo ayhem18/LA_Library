@@ -3,23 +3,13 @@ package ArraysOperations;
 import java.util.Arrays;
 
 public class ArrayOp1D {
-    private static String DimensionsError(double[] array1, double[] array2) {
-        return "Element-wise operations require operands of the same dimensions"
-                + "\n" + "operand 1: " + array1.length + "\n" + "operand 2: " + array2.length;
-    }
-
-    private static String ZeroDivError(double[] array2) {
-        return "Division operation requires the second array to have non-zero elements \n" +
-        "The array " + Arrays.toString(array2) + "\n has at least one zero entry";
-    }
-
     private static void verifyLength(double[] array1, double[] array2) throws ArrayOpException{
         if (array1.length != array2.length) {
-            throw new ArrayOp1DException(DimensionsError(array1, array2));
+            throw new DimensionException1D(array1, array2);
         }
     }
 
-    public static double[] sum(double[] array1, double[] array2) throws ArrayOpException{
+    public static double[] add(double[] array1, double[] array2) throws ArrayOpException{
         verifyLength(array1, array2);
         int l = array1.length;
         double[] result = new double[l];
@@ -51,10 +41,9 @@ public class ArrayOp1D {
 
     public static double[] divide(double[] array1, double[] array2) throws ArrayOpException {
         verifyLength(array1, array2);
-        boolean zeroFree;
         int l = array1.length;
         if (Arrays.stream(array2).anyMatch(x -> x == 0)) {
-            throw new ArrayOp1DException(ZeroDivError(array2));
+            throw new ZeroDivException(array2);
         }
 
         double[] result = new double[l];
