@@ -13,13 +13,13 @@ public class ArrayOp1D {
         "The array " + Arrays.toString(array2) + "\n has at least one zero entry";
     }
 
-    private static void verifyLength(double[] array1, double[] array2) throws ArrayOp1DError{
+    private static void verifyLength(double[] array1, double[] array2) throws ArrayOpException{
         if (array1.length != array2.length) {
-            throw new ArrayOp1DError(DimensionsError(array1, array2));
+            throw new ArrayOp1DException(DimensionsError(array1, array2));
         }
     }
 
-    public static double[] sum(double[] array1, double[] array2) throws ArrayOp1DError{
+    public static double[] sum(double[] array1, double[] array2) throws ArrayOpException{
         verifyLength(array1, array2);
         int l = array1.length;
         double[] result = new double[l];
@@ -29,7 +29,7 @@ public class ArrayOp1D {
         return result;
     }
 
-    public static double[] subtract(double[] array1, double[] array2) throws ArrayOp1DError{
+    public static double[] subtract(double[] array1, double[] array2) throws ArrayOpException{
         verifyLength(array1, array2);
         int l = array1.length;
         double[] result = new double[l];
@@ -39,7 +39,7 @@ public class ArrayOp1D {
         return result;
     }
 
-    public static double[] multiply(double[] array1, double[] array2) throws ArrayOp1DError{
+    public static double[] multiply(double[] array1, double[] array2) throws ArrayOpException{
         verifyLength(array1, array2);
         int l = array1.length;
         double[] result = new double[l];
@@ -49,15 +49,12 @@ public class ArrayOp1D {
         return result;
     }
 
-    public static double[] divide(double[] array1, double[] array2) throws ArrayOp1DError {
+    public static double[] divide(double[] array1, double[] array2) throws ArrayOpException {
         verifyLength(array1, array2);
-        boolean zeroFree = true;
+        boolean zeroFree;
         int l = array1.length;
-        for (double value : array1) {
-            zeroFree = value != 0.0;
-            if (!zeroFree) {
-                throw new ArrayOp1DError(ZeroDivError(array2));
-            }
+        if (Arrays.stream(array2).anyMatch(x -> x == 0)) {
+            throw new ArrayOp1DException(ZeroDivError(array2));
         }
 
         double[] result = new double[l];
@@ -66,11 +63,5 @@ public class ArrayOp1D {
         }
         return result;
     }
-    
 }
 
-class ArrayOp1DError extends Exception{
-    public ArrayOp1DError(String message) {
-        super(message);
-    }
-}
