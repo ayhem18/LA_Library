@@ -18,7 +18,7 @@ public class ElementOperations {
     }
 
     public static Matrix add(double x, Matrix m1) throws MatrixException {
-        return add(m1, new Matrix(m1.getRows(), m1.getColumns(), x));
+        return add(m1, x);
     }
     
     
