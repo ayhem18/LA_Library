@@ -1,24 +1,91 @@
 import ArraysOperations.ArrayOp2D;
 import ArraysOperations.ArrayOpException;
-import Matrices.DiagonalMatrix;
-import Matrices.EliminationMatrix;
-import Matrices.Matrix;
+import Matrices.*;
 
-import Matrices.PermutationMatrix;
 import MatrixOperations.*;
 
-import java.util.Arrays;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.IntStream;
 
 public class Main {
     static Random  generator = new Random();
 
     public static void main(String[] args) throws Exception{
-        testElementaryMultiplication();
+        testInversesComplete();
     }
 
-    public static void testElementaryMultiplication() throws Exception {
+    public static void testInversesComplete() throws Exception{
+        List<Matrix> singularMats = new ArrayList<>();
+        for (int i = 0; i < 300; i++){
+            testInverses(singularMats);
+        }
+
+        System.out.println("########################################################################################");
+        System.out.println("########################################################################################");
+        if (!singularMats.isEmpty()) {
+            for (int i = 0; i < singularMats.size(); i += 4) {
+                System.out.println(UnaryMatrixOperations.inverse(singularMats.get(i).toSquareMatrix()));
+            }
+        }
+
+    }
+    public static void testInverses(List<Matrix> singularMats) throws Exception{
+        int side = generator.nextInt(2, 20);
+        SquareMatrix m = new SquareMatrix(side ,random2DArray(side, side));
+        SquareMatrix inverse = UnaryMatrixOperations.inverse(m);
+        DiagonalMatrix I = new DiagonalMatrix(side);
+        System.out.println("matrix \n" + m);
+        System.out.println("inverse \n" + inverse);
+        Matrix mr = BinaryMatrixOperations.matMultiplication(inverse, m);
+        Matrix ml = BinaryMatrixOperations.matMultiplication(m, inverse);
+        System.out.println("multiplication left \n" + mr);
+        System.out.println("multiplication right \n" + ml);
+        if (!(I.equals(mr) && I.equals(ml))) {
+            singularMats.add(m);
+            throw new Exception("Fix your code buddy");
+        }
+    }
+
+    public static void testElementaryInverses () throws Exception {
+        ElementaryMatrix e = randomElementaryMatrix();
+        int side = e.getSide();
+        DiagonalMatrix I = new DiagonalMatrix(side);
+        ElementaryMatrix eInv = UnaryMatrixOperations.inverse(e);
+        System.out.println("matrix \n" + e);
+        System.out.println("Inverse \n" + eInv);
+        Matrix r ;
+        System.out.println("mul result \n" + (r = BinaryMatrixOperations.matMultiplication(e, eInv)));
+        if (!I.equals(r)) {
+            throw new Exception();
+        }
+    }
+
+    public static ElementaryMatrix randomElementaryMatrix() {
+        int choice = generator.nextInt(3);
+        int side = generator.nextInt(3, 50);
+        if (choice == 0) {
+            return new EliminationMatrix(side, generator.nextInt(side),
+                    generator.nextInt(side), generator.nextInt(-10, 10));
+        }
+        else if (choice == 1) {
+            List<Integer> l = new ArrayList<>();
+            int[] a = IntStream.range(0, side).toArray();
+            for (int v: a) l.add(v);
+            Collections.shuffle(l);
+            for (int i = 0; i < side; i++) a[i] = l.get(i);
+
+            return new PermutationMatrix(side, a);
+        }
+        else {
+            return new DiagonalMatrix(side,
+                    IntStream.range(0,side).mapToDouble(x-> {
+                            int r = generator.nextInt(-20, 20);
+                                    return (r == 0) ? 1: r;}).toArray());
+        }
+    }
+
+
+    public static void testElementaryMultiplication() throws MatrixException {
         for (int i = 0; i < 5; i++) {
 //            EliminationMatrix m1 = new EliminationMatrix(3,
 //                    generator.nextInt(3),
@@ -31,7 +98,7 @@ public class Main {
             Matrix m = new Matrix(6, col, random2DArray(6, col));
             System.out.println("Permutation matrix:\n" + d1);
             System.out.println("other matrix:\n" + m);
-            System.out.println("Their multiplication:\n" + MatrixOperations.matMultiplication(d1, m));
+            System.out.println("Their multiplication:\n" + BinaryMatrixOperations.matMultiplication(d1, m));
             System.out.println("###########################################");
             System.out.println("###########################################");
         }
@@ -88,7 +155,7 @@ public class Main {
             System.out.println(m2);
 
             System.out.println("This is the multiplication's result\n");
-            System.out.println(MatrixOperations.matMultiplication(m1, m2));
+            System.out.println(BinaryMatrixOperations.matMultiplication(m1, m2));
 
             System.out.println("########################################################");
             System.out.println("########################################################");
