@@ -11,9 +11,21 @@ public class Main {
     static Random  generator = new Random();
 
     public static void main(String[] args) throws Exception{
-        testInversesComplete();
+        for (int i = 0; i < 500; i++) testLUFac();
     }
 
+    public static void testLUFac() throws Exception {
+        int side = generator.nextInt(3, 10);
+        SquareMatrix a = new SquareMatrix(random2DArray(side, side));
+        SquareMatrix[] aLU = UnaryMatrixOperations.LUFactorization(a);
+        Matrix product = BinaryMatrixOperations.matMultiplication(aLU[0], aLU[1]);
+        System.out.println("matrix: \n" +  a);
+        System.out.println("L: \n" + aLU[0]);
+        System.out.println("U: \n" + aLU[1]);
+        System.out.println("LU:\n" + product);
+        // System.out.println(a.equals(product));
+        if (!a.equals(product)) throw new Exception();
+    }
     public static void testInversesComplete() throws Exception{
         List<Matrix> singularMats = new ArrayList<>();
         for (int i = 0; i < 300; i++){

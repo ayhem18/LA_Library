@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.stream.IntStream;
 
 public class Matrix {
+
+    private static final double EPSILON = Math.pow(10, -8);
     private static final String CONSTRUCTOR_ERROR =
             "The dimensions of the array passed must match the dimensions' variables";
     private String accessingError(int i, int j) {
@@ -108,7 +110,7 @@ public class Matrix {
                 return false;
             for (int i = 0; i < this.rows; i++) {
                 for (int j = 0; j < this.columns; j++) {
-                    if (this.getCell(i, j) != m.getCell(i, j)) {
+                    if (Math.abs(this.getCell(i, j) - m.getCell(i, j)) >= EPSILON) {
                         return false; }
                 }
             }

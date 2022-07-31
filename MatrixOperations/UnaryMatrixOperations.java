@@ -3,6 +3,11 @@ package MatrixOperations;
 import ArraysOperations.ArrayOp1D;
 import ArraysOperations.ArrayOpException;
 import Matrices.*;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
+
 public class UnaryMatrixOperations {
     public static Matrix transpose(Matrix m1){
         Matrix result = new Matrix(m1.getColumns(), m1.getRows());
@@ -119,5 +124,56 @@ public class UnaryMatrixOperations {
             inverse = BinaryMatrixOperations.matMultiplication(e, inverse);
         }
         return new Matrix[]{matrix, inverse};
+    }
+
+    public static SquareMatrix[] LUFactorization(SquareMatrix m) throws MatrixException {
+        int side = m.getRows();
+        Matrix upper = new SquareMatrix(m);
+        // this matrix will store all the operations of the elimination algorithms
+        ElementaryMatrix e;
+        // this will store the inverse of the original matrix: initialized to an identity matrix
+        List<ElementaryMatrix> EInverses = new ArrayList<>();
+
+        for (int k = 0; k < side; k++) {
+            if (upper.getCell(k, k) == 0) {
+                for (int p = k + 1; p < side; p++ ) {
+                    // find the first row with a non-zero value in the k-th column
+                    if (upper.getCell(p, k) != 0) {
+                        // perform a row exchange
+                        e = new PermutationMatrix(side, p, k);
+                        // apply it on the matrix
+                        upper = BinaryMatrixOperations.matMultiplication(e, upper);
+                        // apply the changes directly on the inverse matrix
+                        EInverses.add(UnaryMatrixOperations.inverse(e));
+                        break;
+                    }
+                }
+            }
+            // if there is a zero in a pivot position, then the matrix is singular, the process should
+            // terminate immediately
+
+            if (upper.getCell(k, k) == 0) {
+                throw new IllegalArgumentException("The matrix \n" + m + "\n is singular");
+            }
+
+            for (int p = k + 1; p < side; p++) {
+                if (upper.getCell(p, k) != 0) {
+                    // subtract the kth row from the p-th row in the matrix.
+                    e = new EliminationMatrix(side, p, k,
+                            - upper.getCell(p, k) / upper.getCell(k, k));
+                    // apply in on the matrix
+                    upper = BinaryMatrixOperations.matMultiplication(e, upper);
+                    // reflect the change on the inverse matrix
+                    EInverses.add(UnaryMatrixOperations.inverse(e));
+                }
+            }
+        }
+
+        Matrix lower = new DiagonalMatrix(m.getRows()).getMatrix();
+        for (int i = EInverses.size() - 1; i >= 0; i--) {
+            lower = BinaryMatrixOperations.matMultiplication(EInverses.get(i), lower);
+        }
+
+        return new SquareMatrix[] {lower.toSquareMatrix(), upper.toSquareMatrix()};
     }
 }
