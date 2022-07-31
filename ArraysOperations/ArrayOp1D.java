@@ -67,7 +67,7 @@ public class ArrayOp1D {
         verifyLength(array1, array2);
         int l = array1.length;
         if (Arrays.stream(array2).anyMatch(x -> x == 0)) {
-            throw new ZeroDivException(array2);
+            throw new ZeroDivExceptionArray(array2);
         }
 
         double[] result = new double[l];
@@ -78,6 +78,10 @@ public class ArrayOp1D {
     }
     public static double[] divide(double[] array1, double x) throws ArrayOpException {
         return divide(array1, IntStream.range(0, array1.length).mapToDouble(y -> x).toArray());
+    }
+
+    public static double[] divide(double x, double[] array2) throws ArrayOpException {
+        return divide(IntStream.range(0, array2.length).mapToDouble(y -> x).toArray(), array2);
     }
 
 }

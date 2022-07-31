@@ -32,8 +32,8 @@ class MultiplicationException extends MatrixException {
     }
 }
 
-class ZeroDivException extends MatrixException {
-    public ZeroDivException(Matrix m2) {
+class ZeroDivExceptionMatrix extends MatrixException {
+    public ZeroDivExceptionMatrix(Matrix m2) {
         super(getError(m2));
     }
 

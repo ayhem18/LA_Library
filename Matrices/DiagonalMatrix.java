@@ -1,11 +1,22 @@
 package Matrices;
 
+import java.util.Arrays;
 import java.util.stream.IntStream;
 
 public class DiagonalMatrix extends ElementaryMatrix{
     double[] diagonal;
-    public DiagonalMatrix(int side, double[] diagonal) {
+
+    private void verifyDiagonal(double[] diagonal) {
+        if (diagonal.length != this.side) {
+            throw new IllegalArgumentException("The diagonal must of the length " + side);
+        }
+    }
+
+    public DiagonalMatrix(int side, double[] diagonal) throws IllegalArgumentException{
         super(side);
+
+        verifyDiagonal(diagonal);
+
         this.diagonal = diagonal;
         this.matrix = new SquareMatrix(side);
         setMatrix();
@@ -25,4 +36,17 @@ public class DiagonalMatrix extends ElementaryMatrix{
     public int getSide() {
         return this.side;
     }
+
+    public double[] getDiagonal() {
+        return diagonal;
+    }
+
+    @Override
+    public boolean equals(Object another) {
+        if (another instanceof DiagonalMatrix d) {
+            return this.side == d.getSide() && Arrays.equals(this.diagonal, d.getDiagonal());
+        }
+        return super.equals(another);
+    }
+
 }

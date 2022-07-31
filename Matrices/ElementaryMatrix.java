@@ -19,4 +19,9 @@ public abstract class ElementaryMatrix {
     public String toString() {
         return matrix.toString();
     }
+
+    @Override
+    public boolean equals(Object another) {
+        return matrix.equals(another);
+    }
 }

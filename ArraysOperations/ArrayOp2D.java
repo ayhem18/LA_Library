@@ -58,7 +58,7 @@ public class ArrayOp2D {
             // verify whether the i-th row has a zero value
             zeroFree = Arrays.stream(row).anyMatch(x -> x == 0);
             if (zeroFree) {
-                throw new ZeroDivException(row);
+                throw new ZeroDivExceptionArray(row);
             }
         }
 

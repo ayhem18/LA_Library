@@ -12,4 +12,8 @@ public class SquareMatrix extends Matrix{
     public SquareMatrix(double[][] matrix) {
         super(matrix);
     }
+
+    public SquareMatrix(SquareMatrix m) {
+        super(m);
+    }
 }
