@@ -1,16 +1,17 @@
 package Spaces;
 
+import Equations.VectorEquation;
 import Matrices.*;
 import MatrixOperations.BinaryMatrixOperations;
 import MatrixOperations.MatrixException;
+import MatrixOperations.UnaryMatrixOperations;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 
 public class SpaceFinder {
-    private static void allSpaces(Matrix A) throws MatrixException {
+    public static Matrix allSpaces(Matrix A) throws MatrixException {
         int rows = A.getRows();
         int columns = A.getColumns();
         int i = 0, j = 0;
@@ -32,7 +33,7 @@ public class SpaceFinder {
                 // check for possible row exchange
                 for (int p = i + 1; p < rows; p++) {
                     // find the first row with a non-zero value in the k-th column
-                    if (copy.getCell(p, i) != 0) {
+                    if (copy.getCell(p, j) != 0) {
                         // perform a row exchange
                         e = new PermutationMatrix(rows, p, i);
                         // apply it on the matrix
@@ -54,10 +55,10 @@ public class SpaceFinder {
                 continue;
             }
 
-            // if the code reaches this part, then there was row a exchange and the column is indeed a pivot column
+            // if the code reaches this part, then there was a row exchange and the column is indeed a pivot column
 
             for (int k = i + 1; k < rows; k++) {
-                Matrix[] rowReduction = rowSubtraction(copy, record, rows, k, i);
+                Matrix[] rowReduction = rowSubtraction(copy, record, rows, k, i, j);
                 copy = rowReduction[0];
                 record = rowReduction[1];
             }
@@ -75,7 +76,7 @@ public class SpaceFinder {
         int rowPosition = 0;
         for (int col: pivotColumns) {
             for (int p = rowPosition - 1; p >= 0; p--) {
-                Matrix[] rowReduction = rowSubtraction(copy, record, rows, p, rowPosition);
+                Matrix[] rowReduction = rowSubtraction(copy, record, rows, p, rowPosition, col);
                 copy = rowReduction[0];
                 record = rowReduction[1];
             }
@@ -101,15 +102,16 @@ public class SpaceFinder {
         record = BinaryMatrixOperations.matMultiplication(e, record);
 
         // now the RREF form is achieved. The rest is to retrieve the four fundamental spaces
+        return copy;
     }
 
 
-    private static Matrix[] rowSubtraction(Matrix copy, Matrix record, int side, int change, int noChange)
+    private static Matrix[] rowSubtraction(Matrix copy, Matrix record, int side, int change, int noChange, int col)
             throws MatrixException{
-        if (copy.getCell(change, noChange) != 0) {
+        if (copy.getCell(change, col) != 0) {
             // subtract the kth row from the p-th row in the matrix.
             EliminationMatrix e = new EliminationMatrix(side, change, noChange,
-                    - copy.getCell(change, noChange) / copy.getCell(noChange, noChange));
+                    - copy.getCell(change, col) / copy.getCell(noChange, col));
             // apply in on the matrix
             copy = BinaryMatrixOperations.matMultiplication(e, copy);
             // reflect the change on the inverse matrix
@@ -118,5 +120,42 @@ public class SpaceFinder {
         return new Matrix[]{copy, record};
     }
 
+//    private static Matrix allSpace(Matrix A)throws MatrixException {
+//        Matrix[] elimination = UnaryMatrixOperations.RREF(A);
+//        Matrix rref = elimination[0];
+//        Matrix record = elimination[1];
+//
+//        List<Integer> pivotCols = new ArrayList<>();
+//
+//        int j = 0, i = 0;
+//        int rows = A.getRows(), cols = A.getColumns();
+//        while (i < rows && j < cols) {
+//            if (rref.getCell(i, j) != 0) {
+//                pivotCols.add(j);
+//                i++;
+//            }
+//            j++;
+//        }
+//        // the pivot columns in the original matrix
+//        Matrix[] colSpace = (Matrix[])
+//                pivotCols.stream().map(x->
+//                        UnaryMatrixOperations.transpose(new Matrix(new double[][]{A.getColumn(x)})))
+//                        .toArray();
+//
+//        int rank = pivotCols.size();
+//        // the first rank(A) rows in the RREF matrix
+//        Matrix[] rowSpace = (Matrix[]) IntStream.range(0, rank).mapToObj(
+//                x-> UnaryMatrixOperations.transpose(new Matrix(new double[][]{rref.getRow(x)}))).toArray();
+//
+//        // the left null space N(A^T)
+//        // the last row - rank rows are zeros. The corresponding rows in the record matrix represent
+//        // basis for the left null space.
+//        Matrix[] leftNullSpace = (Matrix[]) IntStream.range(rank, rows).mapToObj(
+//                x-> UnaryMatrixOperations.transpose(new Matrix(new double[][] {record.getRow(x)}))).toArray();
+//
+//        // only space left is the null space.
+//        Matrix[] nullSpace = VectorEquation.Equation(rref);
+//
+//    }
 
 }

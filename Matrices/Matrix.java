@@ -1,5 +1,7 @@
 package Matrices;
 
+import MatrixOperations.UnaryMatrixOperations;
+
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
@@ -9,8 +11,8 @@ public class Matrix {
     private static final String CONSTRUCTOR_ERROR =
             "The dimensions of the array passed must match the dimensions' variables";
     private String accessingError(int i, int j) {
-        return "The coordinates passed are out of the matrix's boundaries. we have " + rows +" rows and " + columns +
-                " The coordinates passed are (" + i + ", " + j +").";
+        return "The coordinates passed are out of the matrix's boundaries. we have " + rows +" rows and "
+                + columns + " columns" + "\nThe coordinates passed are (" + i + ", " + j +").";
     }
     private final int rows;
     private final int columns;
@@ -127,6 +129,15 @@ public class Matrix {
             throw new IllegalArgumentException("The matrix has different number of rows and columns");
         return new SquareMatrix(this.rows, this.matrix);
     }
+
+    public Matrix getRowMatrix(int i) {
+        return new Matrix(new double[][] {getRow(i)});
+    }
+
+    public Matrix getColMatrix(int j) {
+        return UnaryMatrixOperations.transpose(new Matrix(new double[][]{getColumn(j)}));
+    }
+
 }
 
 

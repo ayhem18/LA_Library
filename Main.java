@@ -1,8 +1,11 @@
 import ArraysOperations.ArrayOp2D;
 import ArraysOperations.ArrayOpException;
+import Equations.VectorEquation;
 import Matrices.*;
-
-import MatrixOperations.*;
+import MatrixOperations.BinaryMatrixOperations;
+import MatrixOperations.ElementOperations;
+import MatrixOperations.MatrixException;
+import MatrixOperations.UnaryMatrixOperations;
 
 import java.util.*;
 import java.util.stream.IntStream;
@@ -10,8 +13,68 @@ import java.util.stream.IntStream;
 public class Main {
     static Random  generator = new Random();
 
+    public static void testRREF() throws Exception{
+        for (int i = 0; i < 10000; i++) {
+            Matrix a = new Matrix(random2DArray(generator.nextInt(2, 10), generator.nextInt(2, 10)));
+            Matrix[] elimination = UnaryMatrixOperations.RREF(a);
+            Matrix rref = elimination[0];
+            Matrix record = elimination[1];
+            boolean check = BinaryMatrixOperations.matMultiplication(record, a).equals(rref);
+            if (!check){
+                System.out.println(a);
+                System.out.println("#########################");
+                System.out.println(rref);
+                System.out.println("##############################");
+                System.out.println(record);
+                System.out.println("################################");
+                throw new Exception();}
+        }
+    }
+
+    public static void t() throws Exception {
+//        Matrix a = new Matrix(random2DArray(generator.nextInt(2, 10), generator.nextInt(2, 10)));
+        Matrix a = new Matrix(new double[][] {{14, 21, 66, 64}, {18, 27, 41, 74}});
+        Matrix[] elimination = UnaryMatrixOperations.RREF(a);
+        Matrix rref = elimination[0];
+        Matrix record = elimination[1];
+
+    }
+
+
     public static void main(String[] args) throws Exception{
-        for (int i = 0; i < 500; i++) testLUFac();
+//        for (int i = 0; i < 50; i++ ) {
+//            Matrix a = new Matrix(new double[][]{{1,2,3,4,5,5,8}, {1,2,3,4,5,5,8}, {1,2,3,4,5,5,8}, {1,2,3,1,5,2,20}});
+//            Matrix b = new Matrix(random2DArray(4, 1));
+//            System.out.println("A \n" + a + "\n");
+//            System.out.println("B \n" + b + "\n");
+//            List<Matrix> sols = VectorEquation.Equation(a, b);
+//            System.out.println("Particular solution for Ax = b \n");
+//            if (!sols.isEmpty())
+//                System.out.println(BinaryMatrixOperations.matMultiplication(a, sols.get(0)).equals(b));
+//        }
+        t();
+    }
+
+
+    public static void testNullSpace() throws Exception {
+        for (int z = 0; z < 100; z++) {
+            for (int x = 0; x < 200; x++) {
+                Matrix a = new Matrix(
+                        random2DArray(generator.nextInt(2,8), generator.nextInt(2, 8)));
+                for (int i = 0; i < 20; i++)
+                    testNullSpace(a);
+            }
+        }
+    }
+
+    public static void testNullSpace(Matrix a) throws Exception {
+        Matrix[] nullSpace = VectorEquation.Equation(a);
+        Matrix finalSol = new Matrix(nullSpace[0].getRows(), nullSpace[0].getColumns());
+        for (Matrix sol: nullSpace) {
+            finalSol = ElementOperations.add(finalSol, ElementOperations.multiply(generator.nextInt(0, 50), sol));
+        }
+        if (!BinaryMatrixOperations.matMultiplication(a, finalSol).equals(new Matrix(a.getRows(), 1)))
+            throw new Exception();
     }
 
     public static void testLUFac() throws Exception {
