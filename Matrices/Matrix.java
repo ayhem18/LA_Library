@@ -7,7 +7,7 @@ import java.util.stream.IntStream;
 
 public class Matrix {
 
-    private static final double EPSILON = Math.pow(10, -8);
+    private static final double EPSILON = Math.pow(10, -9);
     private static final String CONSTRUCTOR_ERROR =
             "The dimensions of the array passed must match the dimensions' variables";
     private String accessingError(int i, int j) {
@@ -51,9 +51,13 @@ public class Matrix {
     public Matrix(Matrix other) {
         this.rows = other.getRows();
         this.columns = other.getColumns();
-        double[][] temp = new double[rows][columns];
-        System.arraycopy(other.getMatrix(), 0, temp, 0, other.getMatrix().length);
-        this.matrix = temp;
+
+        this.matrix = new double[other.rows][other.columns];
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j< columns; j++) {
+                setCell(i, j, other.getCell(i, j));
+            }
+        }
     }
 
     public double getCell(int i, int j) throws IllegalArgumentException{
@@ -66,6 +70,9 @@ public class Matrix {
         if (i >= rows || j >= columns)
             throw new IllegalArgumentException(accessingError(i, j));
         this.matrix[i][j] = value;
+        // if the value set is too small set it to zero
+        if (Math.abs(value) <= EPSILON)
+            this.matrix[i][j] = 0.0;
     }
 
     public double[] getRow(int i){
@@ -77,7 +84,8 @@ public class Matrix {
     }
 
     public void setRow(int i, double[] newRow) {
-        this.matrix[i] = newRow;
+        for (int j = 0; j < columns; j++)
+            this.setCell(i, j, newRow[j]);
     }
 
     public void setColumns(int j, double[] newCol) {

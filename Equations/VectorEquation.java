@@ -29,7 +29,7 @@ public class VectorEquation {
         int rank = pivotCols.size();
 
         Matrix bCopy = BinaryMatrixOperations.matMultiplication(record, b);
-        System.out.println(bCopy);
+        // System.out.println(bCopy);
         // first check that the last (row-rank(A)) rows are zeros in vector b
         for (int i = rank; i < A.getRows(); i++) if (bCopy.getCell(i, 0) != 0) return sols;
         int rowPos = 0;

@@ -16,16 +16,22 @@ public class Main {
     public static void testRREF() throws Exception{
         for (int i = 0; i < 10000; i++) {
             Matrix a = new Matrix(random2DArray(generator.nextInt(2, 10), generator.nextInt(2, 10)));
+            //System.out.println(a);
             Matrix[] elimination = UnaryMatrixOperations.RREF(a);
             Matrix rref = elimination[0];
             Matrix record = elimination[1];
+//            System.out.println("AFTER RREF");
+//            System.out.println(a);
+//            System.out.println("#########################");
+//            System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+//            System.out.println(rref);
             boolean check = BinaryMatrixOperations.matMultiplication(record, a).equals(rref);
             if (!check){
                 System.out.println(a);
                 System.out.println("#########################");
                 System.out.println(rref);
                 System.out.println("##############################");
-                System.out.println(record);
+                System.out.println(BinaryMatrixOperations.matMultiplication(record, a));
                 System.out.println("################################");
                 throw new Exception();}
         }
@@ -37,7 +43,9 @@ public class Main {
         Matrix[] elimination = UnaryMatrixOperations.RREF(a);
         Matrix rref = elimination[0];
         Matrix record = elimination[1];
-
+        System.out.println("A\n" + a);
+        System.out.println("RREF \n" + rref);
+        System.out.println("RECORD \n" + record);
     }
 
 
@@ -52,7 +60,18 @@ public class Main {
 //            if (!sols.isEmpty())
 //                System.out.println(BinaryMatrixOperations.matMultiplication(a, sols.get(0)).equals(b));
 //        }
-        t();
+//        Matrix a = new Matrix(new double[][]{{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1,0}, {0, 0, 0,1}, {0, 0, 0,0},
+//                {0, 0, 0,0}, {0, 0, 0,0}, {0, 0, 0, 0}});
+//        Matrix[] elimination = UnaryMatrixOperations.RREF(a);
+//        Matrix rref = elimination[0];
+//        Matrix record = elimination[1];
+//        System.out.println(a);
+//        System.out.println("##############################");
+//        System.out.println(rref);
+//        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+//        System.out.println(record);
+//        System.out.println(BinaryMatrixOperations.matMultiplication(record, a).equals(rref));
+            testRREF();
     }
 
 
