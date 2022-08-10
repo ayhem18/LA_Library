@@ -4,11 +4,9 @@ import Equations.VectorEquation;
 import Matrices.*;
 import MatrixOperations.BinaryMatrixOperations;
 import MatrixOperations.MatrixException;
-import MatrixOperations.UnaryMatrixOperations;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
 
 public class SpaceFinder {
     public static Matrix allSpaces(Matrix A) throws MatrixException {
@@ -104,7 +102,6 @@ public class SpaceFinder {
         // now the RREF form is achieved. The rest is to retrieve the four fundamental spaces
         return copy;
     }
-
 
     private static Matrix[] rowSubtraction(Matrix copy, Matrix record, int side, int change, int noChange, int col)
             throws MatrixException{

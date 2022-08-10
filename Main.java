@@ -36,6 +36,25 @@ public class Main {
                 throw new Exception();}
         }
     }
+    public static void testAXB() throws Exception {
+        for (int i = 0; i < 1000; i++) {
+            Matrix a = new Matrix(random2DArray(generator.nextInt(2, 10), generator.nextInt(2, 10)));
+            for (int j = 0; j < 100000; j++) {
+                Matrix b = new Matrix(random2DArray(a.getRows(), 1));
+                List<Matrix> sols = VectorEquation.Equation(a, b);
+                boolean check=true;
+                if (!sols.isEmpty()) {
+                    System.out.println("NON EMPTY");check = BinaryMatrixOperations.matMultiplication(a, sols.get(0)).equals(b);}
+                if (!check) {
+                    System.out.println("a\n" + a);
+                    System.out.println("b\n" + b);
+                    System.out.println("result\n");
+                    System.out.println(BinaryMatrixOperations.matMultiplication(a, sols.get(0)));
+                    throw new Exception();
+                }
+            }
+        }
+    }
 
     public static void t() throws Exception {
 //        Matrix a = new Matrix(random2DArray(generator.nextInt(2, 10), generator.nextInt(2, 10)));
@@ -71,9 +90,8 @@ public class Main {
 //        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 //        System.out.println(record);
 //        System.out.println(BinaryMatrixOperations.matMultiplication(record, a).equals(rref));
-            testRREF();
+        testAXB();
     }
-
 
     public static void testNullSpace() throws Exception {
         for (int z = 0; z < 100; z++) {

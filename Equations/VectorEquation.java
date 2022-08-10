@@ -17,6 +17,7 @@ public class VectorEquation {
         if (b.getRows() != A.getRows() || b.getColumns() != 1) {
             throw new IllegalArgumentException("The right hand side must be a column vector with the corresponding dimensions");
         }
+        if (b.equals(new Matrix(b.getRows(), 1))) return Arrays.asList(Equation(A));
 
         List<Matrix> sols = new ArrayList<>();
         Matrix[] elimination = UnaryMatrixOperations.RREF(A);
