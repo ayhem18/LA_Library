@@ -69,28 +69,10 @@ public class Main {
 
 
     public static void main(String[] args) throws Exception{
-//        for (int i = 0; i < 50; i++ ) {
-//            Matrix a = new Matrix(new double[][]{{1,2,3,4,5,5,8}, {1,2,3,4,5,5,8}, {1,2,3,4,5,5,8}, {1,2,3,1,5,2,20}});
-//            Matrix b = new Matrix(random2DArray(4, 1));
-//            System.out.println("A \n" + a + "\n");
-//            System.out.println("B \n" + b + "\n");
-//            List<Matrix> sols = VectorEquation.Equation(a, b);
-//            System.out.println("Particular solution for Ax = b \n");
-//            if (!sols.isEmpty())
-//                System.out.println(BinaryMatrixOperations.matMultiplication(a, sols.get(0)).equals(b));
-//        }
-//        Matrix a = new Matrix(new double[][]{{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1,0}, {0, 0, 0,1}, {0, 0, 0,0},
-//                {0, 0, 0,0}, {0, 0, 0,0}, {0, 0, 0, 0}});
-//        Matrix[] elimination = UnaryMatrixOperations.RREF(a);
-//        Matrix rref = elimination[0];
-//        Matrix record = elimination[1];
-//        System.out.println(a);
-//        System.out.println("##############################");
-//        System.out.println(rref);
-//        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-//        System.out.println(record);
-//        System.out.println(BinaryMatrixOperations.matMultiplication(record, a).equals(rref));
-        testAXB();
+        int n=10000;
+        for (int i = 0; i < n; i++){
+            testGrim();
+        }
     }
 
     public static void testNullSpace() throws Exception {
@@ -271,6 +253,28 @@ public class Main {
 
             System.out.println("########################################################");
             System.out.println("########################################################");
+        }
+    }
+
+    public static void testGrim() throws Exception{
+        Matrix a = null;
+        try {
+            int rows = generator.nextInt(2, 8);
+            int cols = generator.nextInt(2, rows+1);
+            a = new Matrix(random2DArray(rows, cols));
+            System.out.println("a \n" + a);
+            Matrix grim = UnaryMatrixOperations.grimSchmidt(a);
+            System.out.println("grim \n" + grim);
+            System.out.println("#########################################");
+            Matrix I = new DiagonalMatrix(cols).getMatrix();
+            Matrix verProd ;
+            System.out.println("grimTgrim \n" +
+                    (verProd = BinaryMatrixOperations.
+                            matMultiplication(UnaryMatrixOperations.transpose(grim), grim)));
+            if (!I.equals(verProd)) throw new Exception("Buddy check you code");
+        } catch(MatrixException |  IllegalArgumentException e) {
+            boolean isDep = UnaryMatrixOperations.rank(a) == Math.min(a.getRows(), a.getColumns());
+            if (isDep) throw new Exception("Check your code buddy");
         }
     }
 }

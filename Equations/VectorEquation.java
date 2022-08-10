@@ -97,4 +97,24 @@ public class VectorEquation {
         }
         return Stream.of(pivotCols, freeCols).collect(Collectors.toList());
     }
+
+    public static List<Matrix> bestSolution(Matrix A, Matrix b) {
+        // make sure b is a column vector
+        if (b.getRows() != A.getRows() || b.getColumns() != 1) {
+            throw new IllegalArgumentException("The right hand side must be a column vector with the corresponding dimensions");
+        }
+        List<Matrix> result;
+        try {
+            result = Equation(A, b);
+        } catch(MatrixException m) {
+            try {
+            Matrix AT = UnaryMatrixOperations.transpose(A);
+            result =
+                    Equation(BinaryMatrixOperations.matMultiplication(AT, A), AT);
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Matrix \n" + A + "\n have dependent columns");
+            }
+        }
+        return result;
+    }
 }

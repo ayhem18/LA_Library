@@ -4,10 +4,10 @@ import ArraysOperations.ArrayOp1D;
 import ArraysOperations.ArrayOpException;
 import Matrices.*;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class UnaryMatrixOperations {
     public static Matrix transpose(Matrix m1){
@@ -313,5 +313,55 @@ public class UnaryMatrixOperations {
         }
         return new Matrix(newArray);
     }
-}
 
+    public static Matrix projectionMatrix(Matrix A) throws MatrixException {
+        return BinaryMatrixOperations.matMultiplication(
+                BinaryMatrixOperations.matMultiplication(A, // A matrix
+                inverse(BinaryMatrixOperations.matMultiplication(transpose(A), A).toSquareMatrix())), //(A * A^T)^-1
+                transpose(A)); // A^T
+    }
+
+    public static Matrix grimSchmidt(Matrix A) throws MatrixException{
+        int cols = A.getColumns();
+        // store all the column vectors of A in a list
+        List<Matrix> a = IntStream.range(0, cols).mapToObj(A::getColMatrix).toList();
+        // list to store the orthogonal columns
+        List<Matrix> q = new ArrayList<>();
+        // list to store the projections on each vector of the list "q"
+        List<Matrix> p = new ArrayList<>();
+
+        // the first column is not modified
+        q.add(a.get(0)); // q_1 = a_1
+        // add its projection
+        p.add(projectionMatrix(q.get(0)));
+        for (int i = 1; i < cols; i++) {
+            q.add(a.get(i)); //q_i = a_i
+            for (int j = 0; j < i; j++) {
+                Matrix pjComponent = BinaryMatrixOperations.matMultiplication(p.get(j), a.get(i));
+                q.set(i, ElementOperations.subtract(q.get(i), pjComponent));
+            }
+            p.add(projectionMatrix(q.get(i)));
+        }
+        // normalize the vectors
+        for (int i = 0; i < cols;i++) {
+            q.set(i, ElementOperations.divide(q.get(i), vectorNorm(q.get(i))));
+        }
+        // now it is time to convert the separate columns into a single matrix
+        Matrix result = new Matrix(A.getRows(), cols); // matrix to store the result
+
+        for (int i = 0; i < cols; i++) {
+            Matrix intermediateMatrix = new Matrix(1, cols);
+            intermediateMatrix.setCell(0, i, 1);
+            result = ElementOperations.add(result,
+                    BinaryMatrixOperations.matMultiplication(q.get(i), intermediateMatrix));
+        }
+        return result;
+    }
+    public static double vectorNorm(Matrix vec) throws MatrixException{
+        if (vec.getColumns() > 1)
+            throw new IllegalArgumentException("Please pass a column vector");
+        return Math.sqrt(
+                BinaryMatrixOperations.matMultiplication(
+                        UnaryMatrixOperations.transpose(vec), vec).getCell(0, 0));
+    }
+}
