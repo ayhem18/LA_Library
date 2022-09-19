@@ -6,7 +6,6 @@ import Matrices.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class UnaryMatrixOperations {
@@ -23,11 +22,23 @@ public class UnaryMatrixOperations {
         return transpose(m.getMatrix());
     }
 
+    /**
+     * All elimination matrices are invertible: changing the sign of the only non-zero, non -diagonal value
+     * @param e elimination matrix
+     * @return the inverse of the elimination matrix
+     */
     protected static EliminationMatrix inverse(EliminationMatrix e) {
         // the inverse of an elimination matrix is the same matrix only with the opposite of the elimination value
         return new EliminationMatrix(e.getSide(), e.getI(), e.getJ(), -e.getEliminationValue());
     }
 
+    /**
+     * All diagonal matrices are invertible: a digonal matrix where each diagonal value is the inverse (recriproque)
+     * of the corresponding diagonal value
+     * @param d: diagonal matrix
+     * @return the inverse of the matrix
+     * @throws MatrixException: if the matrix has zero in its diagonal
+     */
     protected static DiagonalMatrix inverse(DiagonalMatrix d) throws MatrixException {
         try {
             return new DiagonalMatrix(d.getSide(), ArrayOp1D.divide(1, d.getDiagonal()));
@@ -36,6 +47,12 @@ public class UnaryMatrixOperations {
         }
     }
 
+    /**
+     *
+     * All permutations matrices are invertible: the inverse of a permutation matrix is its transpose
+     * @param p elimination matrix
+     * @return the inverse of the elimination matrix
+     */
     protected static PermutationMatrix inverse(PermutationMatrix p) {
         int[] newPositions = new int[p.getSide()];
         for (int i = 0; i < p.getSide(); i++) {
@@ -52,6 +69,12 @@ public class UnaryMatrixOperations {
         return inverse((DiagonalMatrix) e);
     }
 
+    /**
+     * Only Square matrices can be invertible
+     * @param m: square matrix
+     * @return: the matrix M such that m * M = I (identity matrix)
+     * @throws MatrixException: in case the matrix is not invertible
+     */
     public static SquareMatrix inverse(SquareMatrix m) throws MatrixException {
         int side = m.getColumns();
         Matrix copy = new SquareMatrix(m);
@@ -113,6 +136,9 @@ public class UnaryMatrixOperations {
         return inverse.toSquareMatrix();
     }
 
+    /*
+    helper function used to subtract one column from another in the elimination process
+     */
     private static Matrix[] rowSubtraction(Matrix matrix, Matrix inverse, int side, int change, int noChange)
             throws MatrixException{
         return rowSubtraction(matrix, inverse, side, change, noChange, noChange);
@@ -128,6 +154,12 @@ public class UnaryMatrixOperations {
 //        return new Matrix[]{matrix, inverse};
     }
 
+    /**
+     *
+     * @param m a square matrix (invertible)
+     * @return Two Square matrices L and U where L: is upper and L: is a lower matrix and m = L * U
+     * @throws MatrixException: if the matrix is not invertible
+     */
     public static SquareMatrix[] LUFactorization(SquareMatrix m) throws MatrixException {
         int side = m.getRows();
         Matrix upper = new SquareMatrix(m);
@@ -179,6 +211,12 @@ public class UnaryMatrixOperations {
         return new SquareMatrix[] {lower.toSquareMatrix(), upper.toSquareMatrix()};
     }
 
+    /**
+     *
+     * @param A any matrix
+     * @return the Reduced Row Echelon Form of matrix A.
+     * @throws MatrixException: if any error in matrix calculation takes place
+     */
     public static Matrix[] RREF(Matrix A) throws MatrixException {
         int rows = A.getRows();
         int columns = A.getColumns();
@@ -280,6 +318,13 @@ public class UnaryMatrixOperations {
         return new Matrix[]{copy, record};
     }
 
+    /**
+     * The rank is one of the most expressive values of a matrix as it represents the number of independent columns
+     * as well as the basics of the matrix fundamental spaces
+     * @param m: a matrix
+     * @return the number of linearly independent columns
+     * @throws MatrixException
+     */
     public static int rank(Matrix m) throws MatrixException {
         Matrix rref = RREF(m)[0];
 
@@ -298,6 +343,10 @@ public class UnaryMatrixOperations {
         return rank;
     }
 
+    /*
+    This method is analogue to the broadcast process taking place in Python numerical libraries
+    where one matrix can be extended to new dimensions to apply certain operations on it.
+     */
     public static Matrix broadcast(Matrix m, int newR, int newC, double cte) {
         double[][] array = m.getMatrix();
         double[][] newArray = new double[newR][newC];
@@ -314,6 +363,9 @@ public class UnaryMatrixOperations {
         return new Matrix(newArray);
     }
 
+    /*
+    Any matrix is associated with a projection matrix computed as : A * (A * A^T)^-1 * A^T
+     */
     public static Matrix projectionMatrix(Matrix A) throws MatrixException {
         return BinaryMatrixOperations.matMultiplication(
                 BinaryMatrixOperations.matMultiplication(A, // A matrix
@@ -321,6 +373,13 @@ public class UnaryMatrixOperations {
                 transpose(A)); // A^T
     }
 
+    /**
+     * This function executes the GrimSchmidt process as it returns a matrix B with the same column space
+     * but with orthonormal columns
+     * @param A any matrix
+     * @return the result of the GrimSchmidt process
+     * @throws MatrixException
+     */
     public static Matrix grimSchmidt(Matrix A) throws MatrixException{
         int cols = A.getColumns();
         // store all the column vectors of A in a list
@@ -357,6 +416,9 @@ public class UnaryMatrixOperations {
         }
         return result;
     }
+    /*
+    This function returns the norm of a vector x:  ||x||.
+     */
     public static double vectorNorm(Matrix vec) throws MatrixException{
         if (vec.getColumns() > 1)
             throw new IllegalArgumentException("Please pass a column vector");

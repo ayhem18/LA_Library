@@ -1,5 +1,13 @@
 package Matrices;
 
+/**
+ * This class is a parent class to all special matrices:
+ *      Permutation
+ *      Elimination
+ *      Diagonal
+ * matrices
+ */
+
 public abstract class ElementaryMatrix {
     protected int side;
     protected SquareMatrix matrix;

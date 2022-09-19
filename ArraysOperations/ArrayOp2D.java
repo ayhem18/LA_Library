@@ -2,24 +2,18 @@ package ArraysOperations;
 
 import java.util.Arrays;
 
+/**
+ * This class extends the basic arithmetic operations to 2D arrays
+ */
 public class ArrayOp2D {
-    private static String DimensionsError(double[][] array1, double[][] array2) {
-        return "Element-wise operations require arrays of the same dimensions"
-                + "\n" + "operand 1: (" + array1.length + ", " + array1[0].length + ")\n" + "operand 2: ("
-                + array2.length + ", " + array2[0].length + ")";
-    }
-
-    private static String ZeroDivError(double[] arrayRaw) {
-        return "Division operation requires the second array to have non-zero elements \n" +
-                "The array's raw: " + Arrays.toString(arrayRaw) + "\n has at least one zero entry";
-    }
-
+    // verify that arrays are of the exact same shape
     private static void verifyLength(double[][] array1, double[][] array2) throws ArrayOpException{
         if (array1.length != array2.length || array1[0].length != array2[0].length) {
             throw new DimensionException2D(array1, array2);
         }
     }
 
+    // add two arrays element wise
     public static double[][] add(double[][] array1, double[][] array2) throws ArrayOpException{
         verifyLength(array1, array2);
         int l = array1.length;
@@ -30,6 +24,7 @@ public class ArrayOp2D {
         return result;
     }
 
+    // subtract two arrays element wise
     public static double[][] subtract(double[][] array1, double[][] array2) throws ArrayOpException{
         verifyLength(array1, array2);
         int l = array1.length;
@@ -40,6 +35,7 @@ public class ArrayOp2D {
         return result;
     }
 
+    // multiply two arrays element wise
     public static double[][] multiply(double[][] array1, double[][] array2) throws ArrayOpException{
         verifyLength(array1, array2);
         int l = array1.length;
@@ -50,6 +46,7 @@ public class ArrayOp2D {
         return result;
     }
 
+    // divide two arrays element wise: make sure the second array has no zero elements
     public static double[][] divide(double[][] array1, double[][] array2) throws ArrayOpException {
         verifyLength(array1, array2);
         boolean zeroFree;

@@ -12,7 +12,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class VectorEquation {
-    // this function returns
+    /**
+     * @param A: any matrix
+     * @param b: any column vector
+     * @return a set of column vectors: where a solution of A x = b is a linear combination of those vectors
+     * @throws MatrixException
+     */
     public static List<Matrix> Equation(Matrix A, Matrix b) throws MatrixException {
         if (b.getRows() != A.getRows() || b.getColumns() != 1) {
             throw new IllegalArgumentException("The right hand side must be a column vector with the corresponding dimensions");
@@ -46,6 +51,12 @@ public class VectorEquation {
     }
 
     // this function returns the solution for the equation: Ax = 0
+
+    /**
+     * @param A any matrix
+     * @return a set of column vectors: where a solution of A x = 0 is a linear combination of those vectors
+     * @throws MatrixException
+     */
     public static Matrix[] Equation(Matrix A) throws MatrixException {
         Matrix rref = UnaryMatrixOperations.RREF(A)[0];
 
@@ -70,15 +81,16 @@ public class VectorEquation {
                 row++;
             }
 
-            // add the opposite of the free column to the solution while making sure to broadcast the free column
-//            sols[solOrder] = ElementOperations.add(sols[solOrder],
-//                    UnaryMatrixOperations.broadcast(
-//                            ElementOperations.multiply(-1, rref.getColMatrix(col)), cols, 1, 0));
             solOrder ++;
         }
         return sols;
     }
 
+    /**
+     *
+     * @param rref: A matrix in its Row Reduced Echelon form
+     * @return two lists of indices: the first for pivot independent columns, the second for free linearly dependent ones
+     */
     private static List<List<Integer>> columns(Matrix rref) {
         List<Integer> freeCols = new ArrayList<>();
         List<Integer> pivotCols = new ArrayList<>();
@@ -98,6 +110,13 @@ public class VectorEquation {
         return Stream.of(pivotCols, freeCols).collect(Collectors.toList());
     }
 
+    /**
+     * This method implements the least squared numerical method as it returns the best solution for the
+     * equation A x = b (when B does not belong to the column space of A)
+     * @param A any matrix
+     * @param b: any vector
+     * @return: the solution with the minimal squared error.
+     */
     public static List<Matrix> bestSolution(Matrix A, Matrix b) {
         // make sure b is a column vector
         if (b.getRows() != A.getRows() || b.getColumns() != 1) {

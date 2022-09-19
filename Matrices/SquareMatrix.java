@@ -1,5 +1,9 @@
 package Matrices;
 
+/**
+ * An extension
+ */
+
 public class SquareMatrix extends Matrix{
     public SquareMatrix(int side, double[][] matrix) {
         super(side, side, matrix);

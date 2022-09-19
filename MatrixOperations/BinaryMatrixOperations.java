@@ -6,7 +6,13 @@ import Matrices.*;
 
 import java.util.Arrays;
 
+/**
+ * This class implements the different operations between two different matrices (mainly matrix multiplication)
+ */
 public class BinaryMatrixOperations {
+    /*
+    This method multiplies two matrices using the generic approach
+     */
     public static Matrix matMultiplication(Matrix m1, Matrix m2) throws MatrixException {
         if (m1.getColumns() != m2.getRows()) {
             throw new MultiplicationException(m1, m2);
@@ -23,6 +29,10 @@ public class BinaryMatrixOperations {
         }
         return result;
     }
+
+    /*
+    If one of the matrices is known to be elementary then, signficant optimizations can be implemented
+     */
     public static Matrix matMultiplication(Matrix m1, ElementaryMatrix m2) throws MatrixException {
         return matMultiplication(m1, m2.getMatrix());
     }
@@ -44,7 +54,9 @@ public class BinaryMatrixOperations {
         }
         return result;
     }
-
+    /*
+    Multiplying by a diagonal matrix simply means multiplying each row by the diagonal value: O(n) complexity instead of O(n^3)
+     */
     public static Matrix matMultiplication(DiagonalMatrix m1, Matrix m2) throws MatrixException {
         if (m1.getSide() != m2.getRows()) {
             throw new MultiplicationException(m1.getMatrix(), m2);
@@ -60,6 +72,10 @@ public class BinaryMatrixOperations {
         return result;
     }
 
+    /*
+    Multiplying by a permutation matrix means swapping the right rows: the right rows indices are stored as
+    attributes in the permutation matrix
+     */
     public static Matrix matMultiplication(PermutationMatrix m1, Matrix m2) throws MatrixException {
         if (m1.getSide() != m2.getRows()) {
             throw new MultiplicationException(m1.getMatrix(), m2);

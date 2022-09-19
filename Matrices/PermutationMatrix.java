@@ -5,10 +5,15 @@ import Utilities.HelperFunctions;
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
+/**
+ * A Java class representing an elementary matrix: Permuation matrices
+ * It stores the positions of the ones: the i-th value at positions attributes is the index of the 1 in the i-th column
+ */
+
 public class PermutationMatrix extends ElementaryMatrix {
     private final int[] positions;
-
-    private void verifyPositions(int[] positions) throws IllegalArgumentException{
+    // helper functions making sure that positions passed represent a permutation of 1...n
+    private void verifyPositions(int[] positions) throws    IllegalArgumentException{
         int[] positions_sorted = positions.clone();
         Arrays.sort(positions_sorted);
         if (! (positions.length == side &&
@@ -23,6 +28,12 @@ public class PermutationMatrix extends ElementaryMatrix {
         this.setMatrix();
     }
 
+    /**
+     * a short-cut constructor: creating a Permutation matrix swapping only 2 rows (p1, p2)
+     * @param side: the length of the matrix
+     * @param pos1: the first row to swap
+     * @param pos2: the second row to swap
+     */
     public PermutationMatrix(int side, int pos1, int pos2) {
         this(side, HelperFunctions.specialPermutation(side, pos1, pos2));
     }
@@ -36,6 +47,7 @@ public class PermutationMatrix extends ElementaryMatrix {
         return positions;
     }
 
+    // custom equal function
     @Override
     public boolean equals(Object another) {
         if (another instanceof PermutationMatrix p) {

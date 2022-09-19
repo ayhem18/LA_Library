@@ -1,7 +1,8 @@
 package ArraysOperations;
 
-import java.util.Arrays;
-
+/**
+ * Custom exceptions built to better handle the mathematical errors
+ */
 public abstract class ArrayOpException extends Exception{
     public ArrayOpException(String message) {
         super(message);
